@@ -64,7 +64,7 @@ VizDimLoadings(day16, dims = 1:3, reduction = "pca")
 
 DimPlot(day16, reduction = "pca")
 DimHeatmap(day16, dims = 1, cells = 1000, balanced = TRUE)
-DimHeatmap(day16, dims = 1:20, cells = 1000, balanced = TRUE)
+DimHeatmap(day16, dims = 1:21, cells = 1000, balanced = TRUE)
 
 
 #Dimensionality
@@ -73,33 +73,36 @@ DimHeatmap(day16, dims = 1:20, cells = 1000, balanced = TRUE)
 day16 <- JackStraw(day16,num.replicate = 100)
 day16 <- ScoreJackStraw(day16, dims = 1:20)
 JackStrawPlot(day16, dims = 1:20)
-ElbowPlot(day16) #I'll take 9
+ElbowPlot(day16) #I'll take 
 
 #Clustering
 #----------
-day16 <- FindNeighbors(day16,dims = 1:9)
-day16 <- FindClusters(day16, resolution = 0.1)
+day16 <- FindNeighbors(day16,dims = 1:5)
+day16 <- FindClusters(day16, resolution = 0.25)
 
 #Non-linear reduction
 #--------------------
-day16 <- RunUMAP(day16, dims = 1:9)
-day16 <-RunTSNE(day16, dims = 1:9)
+day16 <- RunUMAP(day16, dims = 1:5)
+day16 <-RunTSNE(day16, dims = 1:5)
 DimPlot(day16, reduction = "umap")#With 0.1 resolution looks better
 DimPlot(day16, reduction = "tsne") #With 0.2 resolution looks better
-saveRDS(day16, file = "output/day16.rds")
+#saveRDS(day16, file = "output/day16.rds")
 
 
 #Find clusters
 #-------------
-day16.markers <- FindAllMarkers(day16, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+day16.markers <- FindAllMarkers(day16, only.pos = TRUE, min.pct = 0.1, logfc.threshold = 0.2)
 #cluster
 day16.markers %>% group_by(cluster) %>% top_n(n = 2, wt = avg_logFC)
 #Sort the clusters
 
 #-------------
-head(day16.markers,10)
-VlnPlot(day16, features = c("TOP2A"))
-FeaturePlot(day16, features = "RPS27", reduction = "tsne")
+head(day16.markers,20)
+VlnPlot(day16, features = c("CTGF"))
+
+top2<-day16.markers %>% group_by(cluster) %>% top_n(n = 3, wt = avg_logFC)
+
+FeaturePlot(day16, features = top2$gene, reduction = "tsne")
 #--------------
 
 #HEatmap
