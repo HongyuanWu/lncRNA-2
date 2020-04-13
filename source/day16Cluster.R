@@ -42,7 +42,7 @@ day16 <- NormalizeData(day16,normalization.method = "LogNormalize", scale.factor
 #Feature selection
 #-----------------
 day16 <- FindVariableFeatures(day16, selection.method = "vst", nfeatures = 3000)
-#taking 3000 features out of 3100
+#taking 3000 most variable features
 
 top20 <- head(VariableFeatures(day16),20)
 plot1 <- VariableFeaturePlot(day16)

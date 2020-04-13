@@ -28,7 +28,7 @@ plot2 <- FeatureScatter(day30, feature1 = "nCount_RNA", feature2 = "nFeature_RNA
 plot1 + plot2
 
 
-day30 <- subset(day30, subset = nFeature_RNA > 1000 & nFeature_RNA < 3500 & percent.mt < 3)
+day30 <- subset(day30, subset = nFeature_RNA > 1000 & nFeature_RNA < 5000 & percent.mt < 3)
 #subset cells with at least 1000 genes and max 4000 and less than 3% mt contamination
 
 
@@ -41,8 +41,8 @@ day30 <- NormalizeData(day30,normalization.method = "LogNormalize", scale.factor
 
 #Feature selection
 #-----------------
-day30 <- FindVariableFeatures(day30, selection.method = "vst", nfeatures = 3000)
-#taking 3000 features out of 3100
+day30 <- FindVariableFeatures(day30, selection.method = "vst", nfeatures = 2000)
+#Taking the 2000 most variable features
 
 top20 <- head(VariableFeatures(day30),20)
 plot1 <- VariableFeaturePlot(day30)
@@ -64,7 +64,7 @@ VizDimLoadings(day30, dims = 1:3, reduction = "pca")
 
 DimPlot(day30, reduction = "pca")
 DimHeatmap(day30, dims = 1, cells = 1000, balanced = TRUE)
-DimHeatmap(day30, dims = 1:20, cells = 1000, balanced = TRUE)
+DimHeatmap(day30, dims = 1:21, cells = 1000, balanced = TRUE)
 
 
 #Dimensionality
@@ -73,19 +73,20 @@ DimHeatmap(day30, dims = 1:20, cells = 1000, balanced = TRUE)
 day30 <- JackStraw(day30,num.replicate = 100)
 day30 <- ScoreJackStraw(day30, dims = 1:20)
 JackStrawPlot(day30, dims = 1:20)
-ElbowPlot(day30) #I'll take 9 again
+ElbowPlot(day30) #I'll take 7
 
 #Clustering
 #----------
-day30 <- FindNeighbors(day30,dims = 1:9)
-day30 <- FindClusters(day30, resolution = 0.1)
+day30 <- FindNeighbors(day30,dims = 1:7)
+day30 <- FindClusters(day30, resolution = 0.15)
 
 #Non-linear reduction
 #--------------------
-day30 <- RunUMAP(day30, dims = 1:9)
-day30 <-RunTSNE(day30, dims = 1:9)
+day30 <- RunUMAP(day30, dims = 1:7)
 DimPlot(day30, reduction = "umap")#With 0.1 resolution looks better
-DimPlot(day30, reduction = "tsne") #With 0.2 resolution looks better
+
+day30 <-RunTSNE(day30, dims = 1:7)
+DimPlot(day30, reduction = "tsne") 
 #saveRDS(day30, file = "output/day30.rds")
 
 
@@ -99,7 +100,9 @@ day30.markers %>% group_by(cluster) %>% top_n(n = 2, wt = avg_logFC)
 #-------------
 head(day30.markers,10)
 VlnPlot(day30, features = c("BDNF"))
-FeaturePlot(day30, features = "BDNF", reduction = "tsne")
+top3 <- day30.markers %>% group_by(cluster) %>% top_n(n=3, wt=avg_logFC)
+FeaturePlot(day30, features = top3$gene, reduction = "tsne")
+FeaturePlot(day30, features = top3$gene, reduction = "umap")
 #--------------
 
 #HEatmap
