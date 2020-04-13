@@ -28,8 +28,8 @@ plot2 <- FeatureScatter(day60, feature1 = "nCount_RNA", feature2 = "nFeature_RNA
 plot1 + plot2
 
 
-day60 <- subset(day60, subset = nFeature_RNA > 1000 & nFeature_RNA < 3500 & percent.mt < 3)
-#subset cells with at least 500 genes and max 4000 and less than 3% mt contamination
+day60 <- subset(day60, subset = nFeature_RNA > 500 & nFeature_RNA < 5000 & percent.mt < 3)
+#subset cells with at least 500 genes and max 5000 and less than 3% mt contamination
 
 
 #Normalize the data
@@ -64,7 +64,7 @@ VizDimLoadings(day60, dims = 1:3, reduction = "pca")
 
 DimPlot(day60, reduction = "pca")
 DimHeatmap(day60, dims = 1, cells = 1000, balanced = TRUE)
-DimHeatmap(day60, dims = 1:20, cells = 1000, balanced = TRUE)
+DimHeatmap(day60, dims = 1:21, cells = 1000, balanced = TRUE)
 
 
 #Dimensionality
@@ -78,13 +78,13 @@ ElbowPlot(day60) #I'll take 7
 #Clustering
 #----------
 day60 <- FindNeighbors(day60,dims = 1:7)
-day60 <- FindClusters(day60, resolution = 0.1)
+day60 <- FindClusters(day60, resolution = 0.2)
 
 #Non-linear reduction
 #--------------------
 day60 <- RunUMAP(day60, dims = 1:7)
-day60 <-RunTSNE(day60, dims = 1:7)
 DimPlot(day60, reduction = "umap")#With 0.1 resolution looks better
+day60 <-RunTSNE(day60, dims = 1:7)
 DimPlot(day60, reduction = "tsne") #With 0.1 resolution looks better
 #saveRDS(day60, file = "output/day60.rds")
 
@@ -99,9 +99,13 @@ day60.markers %>% group_by(cluster) %>% top_n(n = 2, wt = avg_logFC)
 #-------------
 head(day60.markers,10)
 VlnPlot(day60, features = c("TFF3"))
-FeaturePlot(day60, features = "RPS27", reduction = "tsne")
+top3 <- day60.markers %>% group_by(cluster) %>% top_n(3,wt = avg_logFC)
+FeaturePlot(day60, features = top3$gene, reduction = "umap")
+FeaturePlot(day60, features = top3$gene, reduction = "tsne")
 #--------------
 
 #HEatmap
 top10 <- day60.markers %>% group_by(cluster) %>% top_n(n = 10, wt = avg_logFC)
+top15 <- day60.markers %>% group_by(cluster) %>% top_n(n = 15, wt = avg_logFC)
 DoHeatmap(day60, features = top10$gene) + NoLegend()
+DoHeatmap(day60, features = top15$gene) + NoLegend()
