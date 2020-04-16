@@ -9,7 +9,7 @@ library(patchwork)
 
 #Read the data
 #-------------
-day60.data <-Read10X(data.dir = "data/FGF8plus_day60/filtered_gene_bc_matrices/GRCh38")
+day60.data <-Read10X(data.dir = "data/V2/FGF8plus_day60/filtered_gene_bc_matrices/GRCh38")
 day60 <- CreateSeuratObject(counts = day60.data, project="lncRNA", min.cells = 5, min.features = 100)
 #min cells takes features present in at leas that many cells.
 #min features includes cells with at least that many features
