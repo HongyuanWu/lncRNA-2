@@ -42,7 +42,7 @@ day16 <- NormalizeData(day16,normalization.method = "LogNormalize", scale.factor
 
 #Feature selection
 #-----------------
-day16 <- FindVariableFeatures(day16, selection.method = "vst", nfeatures = 2000)
+day16 <- FindVariableFeatures(day16, selection.method = "vst", nfeatures = 500)
 #taking 3000 most variable features
 
 top20 <- head(VariableFeatures(day16),20)
@@ -74,17 +74,17 @@ DimHeatmap(day16, dims = 1:21, cells = 1000, balanced = TRUE)
 day16 <- JackStraw(day16,num.replicate = 100)
 day16 <- ScoreJackStraw(day16, dims = 1:20)
 JackStrawPlot(day16, dims = 1:20)
-ElbowPlot(day16) #I'll take 5
+ElbowPlot(day16) #I'll take 3
 
 #Clustering
 #----------
-day16 <- FindNeighbors(day16,dims = 1:5)
-day16 <- FindClusters(day16, resolution = 0.25)
+day16 <- FindNeighbors(day16,dims = 1:3)
+day16 <- FindClusters(day16, resolution = 0.05)
 
 #Non-linear reduction
 #--------------------
-day16 <- RunUMAP(day16, dims = 1:5)
-day16 <-RunTSNE(day16, dims = 1:5)
+day16 <- RunUMAP(day16, dims = 1:3)
+day16 <-RunTSNE(day16, dims = 1:3)
 DimPlot(day16, reduction = "umap")#With 0.1 resolution looks better
 DimPlot(day16, reduction = "tsne") #With 0.2 resolution looks better
 #saveRDS(day16, file = "output/day16.rds")
@@ -99,11 +99,12 @@ day16.markers %>% group_by(cluster) %>% top_n(n = 2, wt = avg_logFC)
 
 #-------------
 head(day16.markers,20)
-VlnPlot(day16, features = c("RGS2"))
-
+VlnPlot(day16, features = c("TH"))
+VlnPlot(day16, features = c("GFAP"))
 top3<-day16.markers %>% group_by(cluster) %>% top_n(n = 3, wt = avg_logFC)
 
 FeaturePlot(day16, features = top3$gene, reduction = "tsne")
+FeaturePlot(day16, features = top3$gene, reduction = "umap")
 #--------------
 
 #HEatmap

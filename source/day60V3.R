@@ -1,4 +1,4 @@
-# Title     : 30 Days clustering pipeline 3.0
+# Title     : 60 Days clustering pipeline 3.0
 # Objective : Extract lncRNA sequences from the different populations at 3 different times and pool them together by population and timepoint
 # Created by: DAVID
 # Created on: 01/04/2020
@@ -42,7 +42,7 @@ day60 <- NormalizeData(day60,normalization.method = "LogNormalize", scale.factor
 
 #Feature selection
 #-----------------
-day60 <- FindVariableFeatures(day60, selection.method = "vst", nfeatures = 2000)
+day60 <- FindVariableFeatures(day60, selection.method = "vst", nfeatures = 500)
 #taking 3000 most variable features
 
 top20 <- head(VariableFeatures(day60),20)
@@ -74,17 +74,17 @@ DimHeatmap(day60, dims = 1:21, cells = 1000, balanced = TRUE)
 day60 <- JackStraw(day60,num.replicate = 100)
 day60 <- ScoreJackStraw(day60, dims = 1:20)
 JackStrawPlot(day60, dims = 1:20)
-ElbowPlot(day60) #I'll take 4
+ElbowPlot(day60) #I'll take 3
 
 #Clustering
 #----------
-day60 <- FindNeighbors(day60,dims = 1:4)
-day60 <- FindClusters(day60, resolution = 0.25)
+day60 <- FindNeighbors(day60,dims = 1:3)
+day60 <- FindClusters(day60, resolution = 0.05)
 
 #Non-linear reduction
 #--------------------
-day60 <- RunUMAP(day60, dims = 1:4)
-day60 <-RunTSNE(day60, dims = 1:4)
+day60 <- RunUMAP(day60, dims = 1:3)
+day60 <-RunTSNE(day60, dims = 1:3)
 DimPlot(day60, reduction = "umap")#With 0.1 resolution looks better
 DimPlot(day60, reduction = "tsne") #With 0.2 resolution looks better
 #saveRDS(day60, file = "output/day60.rds")
@@ -99,7 +99,8 @@ day60.markers %>% group_by(cluster) %>% top_n(n = 2, wt = avg_logFC)
 
 #-------------
 head(day60.markers,20)
-VlnPlot(day60, features = c("MALAT1"))
+VlnPlot(day60, features = c("TFF3"))
+VlnPlot(day60, features = c("TH"))
 
 top3<-day60.markers %>% group_by(cluster) %>% top_n(n = 3, wt = avg_logFC)
 

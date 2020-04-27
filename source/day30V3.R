@@ -42,7 +42,7 @@ day30 <- NormalizeData(day30,normalization.method = "LogNormalize", scale.factor
 
 #Feature selection
 #-----------------
-day30 <- FindVariableFeatures(day30, selection.method = "vst", nfeatures = 2000)
+day30 <- FindVariableFeatures(day30, selection.method = "vst", nfeatures = 500)
 #taking 3000 most variable features
 
 top20 <- head(VariableFeatures(day30),20)
@@ -74,17 +74,17 @@ DimHeatmap(day30, dims = 1:21, cells = 1000, balanced = TRUE)
 day30 <- JackStraw(day30,num.replicate = 100)
 day30 <- ScoreJackStraw(day30, dims = 1:20)
 JackStrawPlot(day30, dims = 1:20)
-ElbowPlot(day30) #I'll take 4
+ElbowPlot(day30) #I'll take 3
 
 #Clustering
 #----------
-day30 <- FindNeighbors(day30,dims = 1:4)
-day30 <- FindClusters(day30, resolution = 0.25)
+day30 <- FindNeighbors(day30,dims = 1:3)
+day30 <- FindClusters(day30, resolution = 0.05)
 
 #Non-linear reduction
 #--------------------
-day30 <- RunUMAP(day30, dims = 1:4)
-day30 <-RunTSNE(day30, dims = 1:4)
+day30 <- RunUMAP(day30, dims = 1:3)
+day30 <-RunTSNE(day30, dims = 1:3)
 DimPlot(day30, reduction = "umap")#With 0.1 resolution looks better
 DimPlot(day30, reduction = "tsne") #With 0.2 resolution looks better
 #saveRDS(day30, file = "output/day30.rds")
