@@ -1,0 +1,6 @@
+
+
+PlotGeneInClusters <- function (GeneDir){
+  
+  
+}
