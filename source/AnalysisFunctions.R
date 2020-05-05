@@ -4,7 +4,8 @@ OpenData <- function(dir="data/",
                      project.name="project",
                      min.cels=5,
                      min.feat=100,
-                     outdir="output/"){
+                     outdir="output/",
+                     saveImg=TRUE){
 
   dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
 
@@ -21,7 +22,8 @@ OpenData <- function(dir="data/",
   plot1 <- FeatureScatter(data.object, feature1 = "nCount_RNA", feature2 = "percent.mt")
   plot2 <- FeatureScatter(data.object, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
   plot3 <- plot1 + plot2
-
+  
+  if (saveImg==TRUE){
   png(filename=paste0(outdir,"FeatViolinPlot.png"))
   print(Vplot)
   dev.off()
@@ -29,7 +31,7 @@ OpenData <- function(dir="data/",
   png(filename=paste0(outdir,"FeatScatterPlot.png"))
   print(plot3)
   dev.off()
-
+  }
 
   return(data.object)
 }
@@ -37,7 +39,8 @@ OpenData <- function(dir="data/",
 
 NormalizeAndScale <- function(data.object,
                               nfeatures=500,
-                              outdir="output/"){
+                              outdir="output/",
+                              saveImg=TRUE){
 
   dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
 
@@ -56,11 +59,12 @@ NormalizeAndScale <- function(data.object,
   top20<-head(VariableFeatures(data.object),20)
   plot1 <- VariableFeaturePlot(data.object)
   plot2 <- LabelPoints(plot = plot1, points = top20, repel = TRUE)
-
+  
+  if(saveImg==TRUE){
   png(filename=paste0( outdir , "VarFeatPlot.png"))
   print(plot2)
   dev.off()
-
+  }
   return(data.object)
 }
 
@@ -71,7 +75,8 @@ LinearAnalysis <- function (data.object,
                             cells=1000,
                             balance=TRUE,
                             JackStrawReplicates=100,
-                            outdir="output/"){
+                            outdir="output/",
+                            saveImg=TRUE){
 
 
   data.object <- RunPCA(data.object, features = VariableFeatures(object = data.object))
@@ -84,6 +89,7 @@ LinearAnalysis <- function (data.object,
   JSPlot <- JackStrawPlot(data.object, dims = 1:dims)
   elbow <- ElbowPlot(data.object)
 
+  if(saveImg==TRUE){
   png(filename=paste0(outdir,"VizdimPlot4dimsPCA.png"))
   print(vizdimplot)
   dev.off()
@@ -99,7 +105,7 @@ LinearAnalysis <- function (data.object,
   png(filename=paste0(outdir,"ElbowPlotPCA.png"))
   print(elbow)
   dev.off()
-
+  }
 
   return(data.object)
 }
@@ -109,7 +115,8 @@ Cluster <-  function (data.object,
                       dims=5,
                       UMAPres=0.1,
                       tSNEREs=0.1,
-                      outdir="output/"){
+                      outdir="output/",
+                      saveImg=TRUE){
   dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
   data.object <- FindNeighbors(data.object,dims = 1:dims)
 
@@ -132,7 +139,8 @@ Cluster <-  function (data.object,
     tSNEPlot <- DimPlot(data.object, reduction = "tsne")
 
   }
-
+  
+  if(saveImg==TRUE){
   png(filename=paste0(outdir,"UMAPPlot_",dims,"dims_",UMAPres,"Res.png"))
   print(UMAPplot)
   dev.off()
@@ -140,8 +148,7 @@ Cluster <-  function (data.object,
   png(filename=paste0(outdir,"tSNEplot_",dims,"dims_",tSNEREs,"Res.png"))
   print(tSNEPlot)
   dev.off()
-
-
+  }
 
   return(data.object)
 
