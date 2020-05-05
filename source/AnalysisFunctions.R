@@ -7,7 +7,7 @@ OpenData <- function(dir="data/",
                      outdir="output/",
                      saveImg=TRUE){
 
-  dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
+  
 
   data <- Read10X(data.dir=dir)
 
@@ -24,14 +24,15 @@ OpenData <- function(dir="data/",
   plot3 <- plot1 + plot2
   
   if (saveImg==TRUE){
-  png(filename=paste0(outdir,"FeatViolinPlot.png"))
-  print(Vplot)
-  dev.off()
-
-  png(filename=paste0(outdir,"FeatScatterPlot.png"))
-  print(plot3)
-  dev.off()
-  }
+    dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
+    png(filename=paste0(outdir,"FeatViolinPlot.png"))
+    print(Vplot)
+    dev.off()
+  
+    png(filename=paste0(outdir,"FeatScatterPlot.png"))
+    print(plot3)
+    dev.off()
+    }
 
   return(data.object)
 }
@@ -42,7 +43,7 @@ NormalizeAndScale <- function(data.object,
                               outdir="output/",
                               saveImg=TRUE){
 
-  dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
+  
 
   data.object <- NormalizeData(data.object,
                                normalization.method = "LogNormalize",
@@ -61,10 +62,11 @@ NormalizeAndScale <- function(data.object,
   plot2 <- LabelPoints(plot = plot1, points = top20, repel = TRUE)
   
   if(saveImg==TRUE){
-  png(filename=paste0( outdir , "VarFeatPlot.png"))
-  print(plot2)
-  dev.off()
-  }
+    dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
+    png(filename=paste0( outdir , "VarFeatPlot.png"))
+    print(plot2)
+    dev.off()
+    }
   return(data.object)
 }
 
@@ -90,22 +92,22 @@ LinearAnalysis <- function (data.object,
   elbow <- ElbowPlot(data.object)
 
   if(saveImg==TRUE){
-  png(filename=paste0(outdir,"VizdimPlot4dimsPCA.png"))
-  print(vizdimplot)
-  dev.off()
-
-  png(filename=paste0(outdir,"DimplotPCA.png"))
-  print(dimplot)
-  dev.off()
-
-  png(filename=paste0(outdir,"JackStrawPlot",dims,"dims.png"))
-  print(JSPlot)
-  dev.off()
-
-  png(filename=paste0(outdir,"ElbowPlotPCA.png"))
-  print(elbow)
-  dev.off()
-  }
+    png(filename=paste0(outdir,"VizdimPlot4dimsPCA.png"))
+    print(vizdimplot)
+    dev.off()
+  
+    png(filename=paste0(outdir,"DimplotPCA.png"))
+    print(dimplot)
+    dev.off()
+  
+    png(filename=paste0(outdir,"JackStrawPlot",dims,"dims.png"))
+    print(JSPlot)
+    dev.off()
+  
+    png(filename=paste0(outdir,"ElbowPlotPCA.png"))
+    print(elbow)
+    dev.off()
+    }
 
   return(data.object)
 }
@@ -117,7 +119,7 @@ Cluster <-  function (data.object,
                       tSNEREs=0.1,
                       outdir="output/",
                       saveImg=TRUE){
-  dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
+  
   data.object <- FindNeighbors(data.object,dims = 1:dims)
 
   if(UMAPres==tSNEREs){
@@ -141,17 +143,17 @@ Cluster <-  function (data.object,
   }
   
   if(saveImg==TRUE){
-  png(filename=paste0(outdir,"UMAPPlot_",dims,"dims_",UMAPres,"Res.png"))
-  print(UMAPplot)
-  dev.off()
-
-  png(filename=paste0(outdir,"tSNEplot_",dims,"dims_",tSNEREs,"Res.png"))
-  print(tSNEPlot)
-  dev.off()
-  }
+    dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
+    png(filename=paste0(outdir,"UMAPPlot_",dims,"dims_",UMAPres,"Res.png"))
+    print(UMAPplot)
+    dev.off()
+  
+    png(filename=paste0(outdir,"tSNEplot_",dims,"dims_",tSNEREs,"Res.png"))
+    print(tSNEPlot)
+    dev.off()
+    }
 
   return(data.object)
-
 }
 
 
