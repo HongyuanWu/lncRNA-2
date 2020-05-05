@@ -99,7 +99,7 @@ day30.markers %>% group_by(cluster) %>% top_n(n = 2, wt = avg_logFC)
 
 #-------------
 head(day30.markers,20)
-VlnPlot(day30, features = c("MALAT1"))
+VlnPlot(day30, features = c("TH"))
 
 top3<-day30.markers %>% group_by(cluster) %>% top_n(n = 3, wt = avg_logFC)
 
