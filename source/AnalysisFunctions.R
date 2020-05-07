@@ -1,4 +1,7 @@
 
+library(tidyverse)
+library(Seurat)
+library(patchwork)
 
 OpenData <- function(dir="data/",
                      project.name="project",
@@ -157,6 +160,82 @@ Cluster <-  function (data.object,
 }
 
 
+GetGeneList <- function(directory){
+  FileList <- list.files(directory, pattern = ".txt")
+  ResList <- data.frame()
+  for (file in FileList){
+    path <- paste0(directory,file)
+    Filedata <- as.list(read.delim(path, sep = "\n"))
+    ResList <- append(ResList, Filedata)
+    
+    
+  }
+  
+  return(ResList)
+}
 
+DotPlotGenes <- function ( geneList, data.object, outdir = "output/",saveImg=TRUE){
+  for (cell in names(geneList)){
+    GenesToPlot <- cells[cell][[1]]
+    
+    img<- DotPlot(data.object, features = GenesToPlot) + coord_flip()
+    
+    if(saveImg==TRUE){
+      dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
+      png(filename=paste0(outdir,cell,".png"))
+      print(img)
+      dev.off()
+    }
+  }
+}
 
+VlnPlotGenes <- function ( geneList, data.object,ArrayOf=6, outdir="output", saveImg=TRUE){
+  for (cell in names(geneList)){
+    GenesToPlot <- cells[cell][[1]]
+    lower=1
+    upper=ArrayOf
+    Identifier <- 1
+    if(length(GenesToPlot)>ArrayOf){
+      while(upper<=length(GenesToPlot)){
+        plotgenes <- GenesToPlot[lower:upper]
+        lower <- lower + ArrayOf
+        upper <- upper + ArrayOf
+        Identifier <- Identifier + 1
+        img<- VlnPlot(data.object, features = plotgenes)
+        if(saveImg==TRUE){
+          dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
+          png(filename=paste0(outdir,cell,"_VPlot",Identifier,".png"))
+          print(img)
+          dev.off()
+        }
+      }
+      
+      plotgenes <- GenesToPlot[lower:length(GenesToPlot)]
+      img<- VlnPlot(data.object, features = plotgenes)
+      if(saveImg==TRUE){
+        dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
+        png(filename=paste0(outdir,cell,"_VPlot",Identifier,".png"))
+        print(img)
+        dev.off()
+      }
+    }
+      
+    else{
+    img<- VlnPlot(data.object, features = GenesToPlot)
+
+    if(saveImg==TRUE){
+      dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
+      png(filename=paste0(outdir,cell,"_VPlot.png"))
+      print(img)
+      dev.off()
+    }
+    }
+
+    
+  }
+}
+
+  
+  
+  
 
