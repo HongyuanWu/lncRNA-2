@@ -198,13 +198,15 @@ VlnPlotGenes <- function ( geneList, data.object,ArrayOf=6, outdir="output", sav
     if(length(GenesToPlot)>ArrayOf){
       while(upper<=length(GenesToPlot)){
         plotgenes <- GenesToPlot[lower:upper]
+        img<- VlnPlot(data.object, features = plotgenes)
+        
         lower <- lower + ArrayOf
         upper <- upper + ArrayOf
         Identifier <- Identifier + 1
-        img<- VlnPlot(data.object, features = plotgenes)
+        
         if(saveImg==TRUE){
           dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
-          png(filename=paste0(outdir,cell,"_VPlot",Identifier,".png"))
+          png(filename=paste0(outdir,cell,"_VPlot_",Identifier,".png"))
           print(img)
           dev.off()
         }
@@ -214,7 +216,7 @@ VlnPlotGenes <- function ( geneList, data.object,ArrayOf=6, outdir="output", sav
       img<- VlnPlot(data.object, features = plotgenes)
       if(saveImg==TRUE){
         dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
-        png(filename=paste0(outdir,cell,"_VPlot",Identifier,".png"))
+        png(filename=paste0(outdir,cell,"_VPlot_",Identifier,".png"))
         print(img)
         dev.off()
       }
