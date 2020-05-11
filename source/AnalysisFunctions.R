@@ -76,7 +76,7 @@ NormalizeAndScale <- function(data.object,
 
 
 LinearAnalysis <- function (data.object,
-                            dims=20,
+                            dims=35,
                             cells=1000,
                             balance=TRUE,
                             JackStrawReplicates=100,
@@ -85,16 +85,21 @@ LinearAnalysis <- function (data.object,
 
 
   data.object <- RunPCA(data.object, features = VariableFeatures(object = data.object))
-  data.object <- JackStraw(data.object,num.replicate = JackStrawReplicates)
+  data.object <- JackStraw(data.object, dims= dims, num.replicate = JackStrawReplicates)
   data.object <- ScoreJackStraw(data.object, dims = 1:dims)
 
-  heatm <- DimHeatmap(data.object, dims = 1:dims, cells = 1000, balanced = TRUE)
+  heatm <- DimHeatmap(data.object, dims = 1:(dims/4), cells = 1000, balanced = TRUE)
   vizdimplot <- VizDimLoadings(data.object, dims = 1:4, reduction = "pca")
   dimplot <- DimPlot(data.object, reduction = "pca")
   JSPlot <- JackStrawPlot(data.object, dims = 1:dims)
   elbow <- ElbowPlot(data.object)
 
   if(saveImg==TRUE){
+    
+    png(filename=paste0(outdir,"HeatMap.png"))
+    print(heatm)
+    dev.off()
+    
     png(filename=paste0(outdir,"VizdimPlot4dimsPCA.png"))
     print(vizdimplot)
     dev.off()
@@ -116,48 +121,63 @@ LinearAnalysis <- function (data.object,
 }
 
 
+DimThreshold <- function(data.object, pval){
+  scores <- as.data.frame((data.object[["pca"]]@"jackstraw")$overall.p.values) 
+  ValidScores<-subset(scores, Score<pval)
+  result<-as.vector(ValidScores$PC)
+  return(as.vector(result))
+}
+
 Cluster <-  function (data.object,
-                      dims=5,
+                      dims=10,
                       UMAPres=0.1,
                       tSNEREs=0.1,
                       outdir="output/",
                       saveImg=TRUE){
   
-  data.object <- FindNeighbors(data.object,dims = 1:dims)
+  data.object <- FindNeighbors(data.object,dims = dims)
 
   if(UMAPres==tSNEREs){
     data.object <- FindClusters(data.object, resolution = UMAPres)
 
-    data.object <- RunUMAP(data.object, dims = 1:dims)
+    data.object <- RunUMAP(data.object, dims = dims)
     UMAPplot <- DimPlot(data.object, reduction = "umap")
 
-    data.object <- RunTSNE(data.object, dims = 1:dims)
+    data.object <- RunTSNE(data.object, dims = dims)
     tSNEPlot <- DimPlot(data.object, reduction = "tsne")
   }
   else{
     data.object <- FindClusters(data.object, resolution = UMAPres)
-    data.object <- RunUMAP(data.object, dims = 1:dims)
+    data.object <- RunUMAP(data.object, dims = dims)
     UMAPplot <- DimPlot(data.object, reduction = "umap")
 
     data.object <- FindClusters(data.object, resolution = tSNEREs)
-    data.object <- RunTSNE(data.object, dims = 1:dims)
+    data.object <- RunTSNE(data.object, dims = dims)
     tSNEPlot <- DimPlot(data.object, reduction = "tsne")
 
   }
   
   if(saveImg==TRUE){
     dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
-    png(filename=paste0(outdir,"UMAPPlot_",dims,"dims_",UMAPres,"Res.png"))
+    png(filename=paste0(outdir,"UMAPPlot_",length(dims),"dims_",UMAPres,"Res.png"))
     print(UMAPplot)
     dev.off()
   
-    png(filename=paste0(outdir,"tSNEplot_",dims,"dims_",tSNEREs,"Res.png"))
+    png(filename=paste0(outdir,"tSNEplot_",length(dims),"dims_",tSNEREs,"Res.png"))
     print(tSNEPlot)
     dev.off()
     }
 
   return(data.object)
 }
+
+ExtractMarkers <- function (data.object, min.pct=0.1, logfc.threshold=0.2){
+  markers <- FindAllMarkers(data.object, only.pos = TRUE, min.pct = min.pct, logfc.threshold = logfc.threshold)
+  markers %>% group_by(cluster) %>% top_n(n = 2, wt = avg_logFC)
+  return(markers)
+}
+
+
 
 
 GetGeneList <- function(directory){
@@ -174,7 +194,9 @@ GetGeneList <- function(directory){
   return(ResList)
 }
 
-DotPlotGenes <- function ( geneList, data.object, outdir = "output/",saveImg=TRUE){
+DotPlotGenes <- function ( geneList, data.object, 
+                           outdir = "output/",
+                           saveImg=TRUE){
   for (cell in names(geneList)){
     GenesToPlot <- cells[cell][[1]]
     
@@ -189,12 +211,14 @@ DotPlotGenes <- function ( geneList, data.object, outdir = "output/",saveImg=TRU
   }
 }
 
-VlnPlotGenes <- function ( geneList, data.object,ArrayOf=6, outdir="output", saveImg=TRUE){
+VlnPlotGenes <- function ( geneList, data.object,ArrayOf=6, 
+                           outdir="output/", 
+                           saveImg=TRUE){
   for (cell in names(geneList)){
     GenesToPlot <- cells[cell][[1]]
     lower=1
     upper=ArrayOf
-    Identifier <- 1
+    Identifier <- 0
     if(length(GenesToPlot)>ArrayOf){
       while(upper<=length(GenesToPlot)){
         plotgenes <- GenesToPlot[lower:upper]
