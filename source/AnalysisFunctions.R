@@ -10,8 +10,6 @@ OpenData <- function(dir="data/",
                      outdir="output/",
                      saveImg=TRUE){
 
-  
-
   data <- Read10X(data.dir=dir)
 
   data.object<-CreateSeuratObject(counts=data,
@@ -21,6 +19,8 @@ OpenData <- function(dir="data/",
   data.object[["percent.mt"]]<-PercentageFeatureSet(data.object, pattern = "^MT-")
 
   Vplot<-VlnPlot(data.object, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol=3)
+  VplotND<-VlnPlot(data.object, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol=3, pt.size = 0)
+  
 
   plot1 <- FeatureScatter(data.object, feature1 = "nCount_RNA", feature2 = "percent.mt")
   plot2 <- FeatureScatter(data.object, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
@@ -31,7 +31,11 @@ OpenData <- function(dir="data/",
     png(filename=paste0(outdir,"FeatViolinPlot.png"))
     print(Vplot)
     dev.off()
-  
+    
+    png(filename=paste0(outdir,"FeatViolinPlotND.png"))
+    print(VplotND)
+    dev.off()
+    
     png(filename=paste0(outdir,"FeatScatterPlot.png"))
     print(plot3)
     dev.off()
@@ -42,12 +46,15 @@ OpenData <- function(dir="data/",
 
 
 NormalizeAndScale <- function(data.object,
+                              min.nFeat=1000,
+                              max.nFeat=3000,
+                              max.MT.Percent=3,
                               nfeatures=500,
                               outdir="output/",
                               saveImg=TRUE){
 
   
-
+  data.object <- subset(data.object, subset = nFeature_RNA > 1100 & nFeature_RNA < 4000 & percent.mt < 3)
   data.object <- NormalizeData(data.object,
                                normalization.method = "LogNormalize",
                                scale.factor = 10000)
