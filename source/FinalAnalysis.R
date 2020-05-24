@@ -4,16 +4,17 @@ source("source/AnalysisFunctions.R")
 cells <- GetGeneList("data/GeneLists/")
 featCounts <- c(1000)
 Res <-c(0.1)
-
+out <- "output/Results_Pval_0.000001/"
 
 dir16 <-"data/V3/FGF8plus_day16_V3/filtered_feature_bc_matrix"
 project <- strsplit(strsplit(dir16, split = "/")[[1]][3],split = "_")[[1]][2]
-out1 <-paste0("output/Results_Pval_0.000001/",project,"/")
+out1 <-paste0(out,project,"/")
 day16 <- OpenData(dir=dir16, project.name = paste0("lncRNA_",project),outdir = out1 )
 write(c("BeforeQC ", ncol(day16)), file = paste0(out1,"CelllogQC.txt"))
 for (features in featCounts){
   out2<-paste0(out1, features,"/")
-  day16 <- NormalizeAndScale(data.object = day16, nfeatures = features, outdir = out2)
+  day16 <- subset(day16, subset = nFeature_RNA > 1100 & nFeature_RNA < 4000 & percent.mt < 3)
+  day16 <- NormalizeAndScale(data.object = day16, nFeatures = features, outdir = out2)
   write(c("AfterQC ", ncol(day16)), file = paste0(out1,"celllogQC.txt"), append = TRUE)
   day16 <- LinearAnalysis(day16,dims = 40, saveImg = TRUE,outdir = out2)
   dims <- DimThreshold(day16,pval = 0.000001)
@@ -50,12 +51,13 @@ write.table(WhichCells(day16, idents = "Neurons"),file=paste0(out1,"NeuronBarcod
 
 dir30 <- "data/V3/FGF8plus_day30_V3/filtered_feature_bc_matrix"
 project <- strsplit(strsplit(dir30, split = "/")[[1]][3],split = "_")[[1]][2]
-out1 <-paste0("output/Results_Pval_0.000001/",project,"/")
+out1 <-paste0(out,project,"/")
 day30 <- OpenData(dir=dir30, project.name = paste0("lncRNA_",project),outdir = out1 ) 
 write(c("BeforeQC ", ncol(day30)), file = paste0(out1,"CelllogQC.txt"))
 for (features in featCounts){
   out2<-paste0(out1, features,"/")
-  day30 <- NormalizeAndScale(data.object = day30, nfeatures = features, outdir = out2)
+  day30 <- subset(day30, subset = nFeature_RNA > 1100 & nFeature_RNA < 4000 & percent.mt < 3)
+  day30 <- NormalizeAndScale(data.object = day30, nFeatures = features, outdir = out2)
   write(c("AfterQC ", ncol(day30)), file = paste0(out1,"celllogQC.txt"), append = TRUE)
   day30 <- LinearAnalysis(day30,dims = 40, saveImg = TRUE,outdir = out2)
   dims <- DimThreshold(day30,pval = 0.000001)
@@ -83,7 +85,7 @@ saveRDS(day30, file=paste0(out1,"day30_1000nFeat_0.1Res.rds"))
 write.table(table(Idents(day30)),file=paste0(out1,"ResultLogDay30.txt"), row.names = FALSE)
 write.table(prop.table(table(Idents(day30))),file=paste0(out1,"ResultLogDay30.txt"), row.names = FALSE, append = TRUE)
 
-write.table(WhichCells(day30, idents = "Neurons"),file=paste0(out1,"NeuronBArcodesDay30.txt"),row.names = FALSE, col.names = FALSE)
+write.table(WhichCells(day30, idents = "Neurons"),file=paste0(out1,"NeuronBarcodesDay30.txt"),row.names = FALSE, col.names = FALSE)
 
 
 #----------------------------------------
@@ -91,13 +93,14 @@ write.table(WhichCells(day30, idents = "Neurons"),file=paste0(out1,"NeuronBArcod
 
 dir60 <- "data/V3/FGF8plus_day60_V3/filtered_feature_bc_matrix"
 project <- strsplit(strsplit(dir60, split = "/")[[1]][3],split = "_")[[1]][2]
-out1 <-paste0("output/Results_Pval_0.000001/",project,"/")
+out1 <-paste0(out,project,"/")
 day60 <- OpenData(dir=dir60, project.name = paste0("lncRNA_",project),outdir = out1 )
 write(c("BeforeQC ", ncol(day60)), file = paste0(out1,"CelllogQC.txt"))
 for (features in featCounts){
   out2<-paste0(out1, features,"/")
-  day60 <- NormalizeAndScale(data.object = day60,nfeatures = features, outdir = out2)
-  write(c("AfterQC ", ncol(day30)), file = paste0(out1,"celllogQC.txt"), append = TRUE)
+  day60 <- subset(day60, subset = nFeature_RNA > 1100 & nFeature_RNA < 4000 & percent.mt < 3)
+  day60 <- NormalizeAndScale(data.object = day60, nFeatures = features, outdir = out2)
+  write(c("AfterQC ", ncol(day60)), file = paste0(out1,"celllogQC.txt"), append = TRUE)
   day60 <- LinearAnalysis(day60,dims = 40, saveImg = TRUE,outdir = out2)
   dims <- DimThreshold(day60,pval = 0.000001)
   out3 <- paste0(out2, length(dims),"_dims/")
@@ -125,4 +128,21 @@ write.table(table(Idents(day60)),file=paste0(out1,"ResultLogDay60.txt"), row.nam
 write.table(prop.table(table(Idents(day60))),file=paste0(out1,"ResultLogDay60.txt"), row.names = FALSE, append = TRUE)
 
 write.table(WhichCells(day60, idents = "Neurons"),file=paste0(out1,"NeuronBarcodesDay60.txt"),row.names = FALSE, col.names = FALSE)
+
+#######################
+
+populations <- read.csv("output/Results_Pval_0.000001/cell_cluster2.csv", sep = ";")
+
+populations$Cluster<-fct_relevel(populations$Cluster,"Neurons", "In Development", "FBLC","Oligodendrocytes")
+
+ggplot(populations, aes(Timepoint, Population, fill=Cluster, group=Cluster)) +
+  geom_bar(stat='identity', position='dodge') +
+  scale_fill_brewer(palette = "Set1") 
+
+
+ggplot(populations, aes(Cluster, Population, fill=Timepoint, group=Timepoint)) +
+  geom_bar(stat='identity', position='dodge') +
+  scale_fill_brewer(palette = "Set1") 
+
+
 

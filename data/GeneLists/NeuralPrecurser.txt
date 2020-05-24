@@ -1,0 +1,5 @@
+NeuronPrecursor
+DCX
+NCAM1
+SYT1
+STMN2

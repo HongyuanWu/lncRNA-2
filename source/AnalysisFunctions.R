@@ -46,22 +46,17 @@ OpenData <- function(dir="data/",
 
 
 NormalizeAndScale <- function(data.object,
-                              min.nFeat=1000,
-                              max.nFeat=3000,
-                              max.MT.Percent=3,
-                              nfeatures=500,
-                              outdir="output/",
-                              saveImg=TRUE){
+                              nFeatures = 500,
+                              outdir = "output/",
+                              saveImg = TRUE){
 
-  
-  data.object <- subset(data.object, subset = nFeature_RNA > 1100 & nFeature_RNA < 4000 & percent.mt < 3)
   data.object <- NormalizeData(data.object,
                                normalization.method = "LogNormalize",
                                scale.factor = 10000)
 
   data.object <- FindVariableFeatures(data.object,
                                       selection.method = "vst",
-                                      nfeatures = nfeatures)
+                                      nfeatures = nFeatures)
 
   all.genes <- rownames(data.object)
   data.object <- ScaleData(data.object, features = all.genes)

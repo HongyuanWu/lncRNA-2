@@ -1,0 +1,6 @@
+Oligodendrocytes
+OLIG1
+OLIG2
+SOX10
+PLP1
+NKX2-2

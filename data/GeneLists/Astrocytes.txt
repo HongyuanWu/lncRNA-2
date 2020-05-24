@@ -1,0 +1,7 @@
+Astrocytes
+AQP4
+GFAP
+SLC1A3
+GJA1
+EDNRB
+SLC6A4
