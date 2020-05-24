@@ -182,7 +182,7 @@ ExtractMarkers <- function (data.object, min.pct=0.1, logfc.threshold=0.2){
 
 GetGeneList <- function(directory){
   FileList <- list.files(directory, pattern = ".txt")
-  ResList <- data.frame()
+  ResList <- list()
   for (file in FileList){
     path <- paste0(directory,file)
     Filedata <- as.list(read.delim(path, sep = "\n"))
