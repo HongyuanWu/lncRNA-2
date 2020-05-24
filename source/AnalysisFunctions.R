@@ -97,14 +97,12 @@ LinearAnalysis <- function (data.object,
   elbow <- ElbowPlot(data.object)
 
   if(saveImg==TRUE){
+    dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
     
     png(filename=paste0(outdir,"HeatMap.png"))
     print(heatm)
     dev.off()
     
-    png(filename=paste0(outdir,"VizdimPlot4dimsPCA.png"))
-    print(vizdimplot)
-    dev.off()
   
     png(filename=paste0(outdir,"DimplotPCA.png"))
     print(dimplot)
