@@ -1,10 +1,10 @@
 
-source("source/AnalysisFunctions.R")
+source("source/AnalysisFunctions.R") # load functions and packages
 
-cells <- GetGeneList("data/GeneLists/")
-featCounts <- c(1000)
+cells <- GetGeneList("data/GeneLists/") #cell markers
+featCounts <- c(1000) #Feature counts
 Res <-c(0.1)
-out <- "output/Results_Pval_0.000001/"
+out <- "output/Results_Pval_0.000001/" #Root for results
 
 dir16 <-"data/V3/FGF8plus_day16_V3/filtered_feature_bc_matrix"
 project <- strsplit(strsplit(dir16, split = "/")[[1]][3],split = "_")[[1]][2]
@@ -29,21 +29,22 @@ for (features in featCounts){
   }
 }
 
+#After looking at the Vplot and DotPlot name the clusters
 new.cluster.ids16 <- c("InDevelopment","Neurons","Oligodendrocytes+PanNeurons+Extraneuronal","FBLC")
 names(new.cluster.ids16) <- levels (day16)
-day16<-RenameIdents(day16, new.cluster.ids16)
+day16<-RenameIdents(day16, new.cluster.ids16)#update the object
 
 
 png(filename=paste0(out1,"ClusterDimPlot.png"))
 print(DimPlot(day16,reduction="umap", label=TRUE))
 dev.off()
 
-saveRDS(day16, file=paste0(out1,"day16_1000nFeat_0.1Res.rds"))
+saveRDS(day16, file=paste0(out1,"day16_1000nFeat_0.1Res.rds")) #Save the object, you dotn want to run this each time
 
 write.table(table(Idents(day16)),file=paste0(out1,"ResultLogDay16.txt"), row.names = FALSE)
-write.table(prop.table(table(Idents(day16))),file=paste0(out1,"ResultLogDay16.txt"), row.names = FALSE, append = TRUE)
+write.table(prop.table(table(Idents(day16))),file=paste0(out1,"ResultLogDay16.txt"), row.names = FALSE, append = TRUE) #Some population stats
 
-write.table(WhichCells(day16, idents = "Neurons"),file=paste0(out1,"NeuronBarcodesDay16.txt"),row.names = FALSE, col.names = FALSE)
+write.table(WhichCells(day16, idents = "Neurons"),file=paste0(out1,"NeuronBarcodesDay16.txt"),row.names = FALSE, col.names = FALSE) # print the barcodes to run lncRNA enrichments
 
 
 #----------------------------------------
@@ -72,6 +73,7 @@ for (features in featCounts){
   }
 }
 
+#After looking at the Vplot and DotPlot name the clusters
 new.cluster.ids30 <- c("Neurons","Oligodendrocytes+Progenitors","InDevelopment","FBLC")
 names(new.cluster.ids30) <- levels (day30)
 day30<-RenameIdents(day30, new.cluster.ids30)
@@ -114,6 +116,7 @@ for (features in featCounts){
   }
 }
 
+#After looking at the Vplot and DotPlot name the clusters
 new.cluster.ids60 <- c("Neurons","InDevelopment","Oligodendrocytes","FBLC")
 names(new.cluster.ids60) <- levels (day60)
 day60<-RenameIdents(day60, new.cluster.ids60)
@@ -131,15 +134,16 @@ write.table(WhichCells(day60, idents = "Neurons"),file=paste0(out1,"NeuronBarcod
 
 #######################
 
-populations <- read.csv("output/Results_Pval_0.000001/cell_cluster2.csv", sep = ";")
+populations <- read.csv("output/Results_Pval_0.000001/cell_cluster2.csv", sep = ";") # Read the csv file created from the ident proportions from each dataset
 
-populations$Cluster<-fct_relevel(populations$Cluster,"Neurons", "In Development", "FBLC","Oligodendrocytes")
+populations$Cluster<-fct_relevel(populations$Cluster,"Neurons", "In Development", "FBLC","Oligodendrocytes") #Reorder so it looks nicer
 
+#Plot em by day
 ggplot(populations, aes(Timepoint, Population, fill=Cluster, group=Cluster)) +
   geom_bar(stat='identity', position='dodge') +
   scale_fill_brewer(palette = "Set1") 
 
-
+#Plot em by cluster
 ggplot(populations, aes(Cluster, Population, fill=Timepoint, group=Timepoint)) +
   geom_bar(stat='identity', position='dodge') +
   scale_fill_brewer(palette = "Set1") 
