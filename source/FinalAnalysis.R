@@ -44,7 +44,7 @@ saveRDS(day16, file=paste0(out1,"day16_1000nFeat_0.1Res.rds")) #Save the object,
 write.table(table(Idents(day16)),file=paste0(out1,"ResultLogDay16.txt"), row.names = FALSE)
 write.table(prop.table(table(Idents(day16))),file=paste0(out1,"ResultLogDay16.txt"), row.names = FALSE, append = TRUE) #Some population stats
 
-write.table(WhichCells(day16, idents = "Neurons"),file=paste0(out1,"NeuronBarcodesDay16.txt"),row.names = FALSE, col.names = FALSE) # print the barcodes to run lncRNA enrichments
+write.table(WhichCells(day16, idents = "Neurons"),file=paste0(out1,"NeuronBarcodesDay16.txt"),row.names = FALSE, col.names = FALSE, quote = FALSE, eol = "-1\n") # print the barcodes to run lncRNA enrichments
 
 
 #----------------------------------------
@@ -87,7 +87,7 @@ saveRDS(day30, file=paste0(out1,"day30_1000nFeat_0.1Res.rds"))
 write.table(table(Idents(day30)),file=paste0(out1,"ResultLogDay30.txt"), row.names = FALSE)
 write.table(prop.table(table(Idents(day30))),file=paste0(out1,"ResultLogDay30.txt"), row.names = FALSE, append = TRUE)
 
-write.table(WhichCells(day30, idents = "Neurons"),file=paste0(out1,"NeuronBarcodesDay30.txt"),row.names = FALSE, col.names = FALSE)
+write.table(WhichCells(day30, idents = "Neurons"),file=paste0(out1,"NeuronBarcodesDay30.txt"),row.names = FALSE, col.names = FALSE, quote = FALSE, eol = "-1\n")
 
 
 #----------------------------------------
@@ -130,7 +130,7 @@ saveRDS(day60, file=paste0(out1,"day60_1000nFeat_0.1Res.rds"))
 write.table(table(Idents(day60)),file=paste0(out1,"ResultLogDay60.txt"), row.names = FALSE)
 write.table(prop.table(table(Idents(day60))),file=paste0(out1,"ResultLogDay60.txt"), row.names = FALSE, append = TRUE)
 
-write.table(WhichCells(day60, idents = "Neurons"),file=paste0(out1,"NeuronBarcodesDay60.txt"),row.names = FALSE, col.names = FALSE)
+write.table(WhichCells(day60, idents = "Neurons"),file=paste0(out1,"NeuronBarcodesDay60.txt"),row.names = FALSE, col.names = FALSE, quote = FALSE, eol = "-1\n")
 
 #######################
 
