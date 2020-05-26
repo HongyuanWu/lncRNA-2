@@ -16,5 +16,5 @@ files=$(ls “/path to your bam/possorted_genome_bam.bam)
 # Gencode exon
 featureCounts -T 8 -p -B \
   --primary -F GTF -t exon -g gene_name \
-    -a “/path to your bam/possorted_Reference genomegenome_bam.bam \
-    -o /projects/fs1/yogitas/Seq010_Oct30_RE/180604_NB502004_0018_AHYMM3BGX5/Cellbarcodes/FeatureCounts/SCells_LncRNA_s1.txt $files
+    -a "Path to regerence lncRNA library" \
+    -o "PATH to output dir"
