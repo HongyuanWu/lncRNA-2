@@ -77,7 +77,7 @@ png(paste0(outdir,"Heatmap_DistancesNT.png"))
 pheatmap(matrix,clustering_distance_rows = distVSD, 
          clustering_distance_cols = distVSD,
          cluster_rows = FALSE, cluster_cols = FALSE,
-         show_rownames = TRUE,show_colnames = TRUE, 
+         show_rownames = TRUE,show_colnames = TRUE, fontsize = 15,
          color = hmcol, main = "Distance Matrix")
 dev.off()
 
