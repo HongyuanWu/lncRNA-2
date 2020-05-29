@@ -1,3 +1,10 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
 # Analysis of long non-coding RNA expression from single cell datasets
 
 # Objective
@@ -23,11 +30,11 @@ This script is used to analyze the lncRNA counts in our dataset and analyzes it 
 ## Analysis functions
 This file calls the different R packages necesary for the analysis and contains the fucntions necesary to find the different clusters in this type of data.
 The functions that contains an `saveIMG` and `outdir` arguments will save tyhe plot generated in the specified outdir after trying to create it, if `saveIMG` is set to `FALSE` (`TRUE` by default) there is no need to specify and `outdir`.
-- **OpenData**: returns the seurat object from a dorectory where all 3 matrix files are located (barcodes, features, matrix). This function will aslo print violin plots for number of features, feature counts and mitochondrial gene presence in our data and FeatureScatter plots 
+- **OpenData**: returns the seurat object from a dorectory where all 3 matrix files are located (barcodes, features, matrix). This function will aslo print violin plots for number of features, feature counts and mitochondrial gene presence in our data and FeatureScatter plots. 
  Usage: `DataObject <- OpenData(dir=PathToData, project.name = Name,outdir = PathToOutput )`
  Note that it is necesary to subset the data after looking at the previous plots.
  `DataObject <- subset(DataObject , subset = nFeature_RNA > 1100 & nFeature_RNA < 4000 & percent.mt < 3)`
-- **NormalizeAndScale**: This function takes a seurat object and a number of variable features, and runs the data normalization using seurat default values ("LogNormalize" as method and a scale factor of 10000). It will return a seurat object with 
+- **NormalizeAndScale**: This function takes a seurat object and a number of variable features, and runs the data normalization using seurat default values ("LogNormalize" as method and a scale factor of 10000). It will return a seurat object with the added information.
 Usage: `DataObject <- NormalizeAndScale(data.object = DataObject, nFeatures = 500, outdir = PathToOutput )`
 Note: If you want to use different parameters for the normalization use the standard seurat functions, an example can be found [here](https://satijalab.org/seurat/v3.1/pbmc3k_tutorial.html).
 - **LinearAnalysis**: This fucniton will take a seurat object as input and will return a seurat object with the added results. It will run Principal Component Analysis (PCA) and a JackStraw test using the specified number of dimensions `dims` and replciates `JackStrawReplicates`. It will also score the JackStraw test. The arguments `cells` and `balance` affect the heatmap printed after the analysis. This function will also print a Jack Straw Plot with the evaluated components and their pvalues, an elbow plot and a scatter plot of the first 2 components.
@@ -55,3 +62,6 @@ It will create a file tree with branches at each different level (Dataset, Varia
 # Data
 Please note that the original data cannot be provided for GDPR policy compliance.
 In this directory you can find a subdirectory with the gene markers used for my results.
+
+
+
