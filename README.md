@@ -1,14 +1,13 @@
 ---
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
-
-
 # Analysis of long non-coding RNA expression from single cell datasets
 
 # Objective
 The objective of this proejct is to design a pipeline/tools to analyze single cell RNA expression data using R and packages such as [Seurat](https://satijalab.org/seurat/) and [DeSeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) for especific diferential expression analysis and [Tidyverse](https://www.tidyverse.org/) as a general toolbox for different plots. (Note that ggplot2 is necesary for Seurat and its contained in Tidyverse).
+
 ## Procedure
 After runing the single cell sequencing protocol on our cell pupulations per manufacturer's protocol using 10x Genomics Single Cell 3' chips in a nextseq machine. The raw basecalls were translated into fastq format using cellranger mkfastq that uses bcl2fastq provided by illumina then the resulting fasta files were processed using the cellranger count V 3.0 provided by 10x. See "`source/cellrangercount_FGF8plus_day*.sh`"
 
@@ -30,6 +29,7 @@ This script is used to analyze the lncRNA counts in our dataset and analyzes it 
 ## Analysis functions
 This file calls the different R packages necesary for the analysis and contains the fucntions necesary to find the different clusters in this type of data.
 The functions that contains an `saveIMG` and `outdir` arguments will save tyhe plot generated in the specified outdir after trying to create it, if `saveIMG` is set to `FALSE` (`TRUE` by default) there is no need to specify and `outdir`.
+
 - **OpenData**: returns the seurat object from a dorectory where all 3 matrix files are located (barcodes, features, matrix). This function will aslo print violin plots for number of features, feature counts and mitochondrial gene presence in our data and FeatureScatter plots. 
  Usage: `DataObject <- OpenData(dir=PathToData, project.name = Name,outdir = PathToOutput )`
  Note that it is necesary to subset the data after looking at the previous plots.
@@ -62,6 +62,5 @@ It will create a file tree with branches at each different level (Dataset, Varia
 # Data
 Please note that the original data cannot be provided for GDPR policy compliance.
 In this directory you can find a subdirectory with the gene markers used for my results.
-
 
 
