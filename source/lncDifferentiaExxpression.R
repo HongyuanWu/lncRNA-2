@@ -50,9 +50,18 @@ vsd <- varianceStabilizingTransformation(dds, blind = TRUE)
 # heatmap countmatrix
 select <- order(rowMeans(counts(dds, normalized=TRUE)), decreasing=TRUE)[1:30]
 df<- as.data.frame(colData(dds)[,c("Timepoint","state")])
-
 top50 <- subset(res, pvalue<0.05)
 countTop50 <- subset(counts(dds), rownames(counts(dds)) %in% rownames(top50))[1:25]
+
+
+
+top25pval <- res[order(res$padj),] [1:25,]
+png(paste0(outdir,"Heatmap_top25byPvalVSD2.png"))
+pheatmap(assay(vsd)[rownames(top25pval),], cluster_rows=FALSE,show_rownames=TRUE, cluster_cols=FALSE, annotation_col=df)
+dev.off()
+
+
+pheatmap(countTop25)
 
 png(paste0(outdir,"Heatmap_top25byPvalVSD.png"))
 pheatmap(assay(vsd)[countTop50,], cluster_rows=FALSE,show_rownames=TRUE, cluster_cols=FALSE, annotation_col=df)

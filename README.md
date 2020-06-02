@@ -3,7 +3,7 @@ output:
   pdf_document: default
   html_document: default
 ---
-# Analysis of long non-coding RNA expression from single cell datasets
+# Analysis of long non-coding RNA expression from single cell RNA sequencing datasets
 
 # Objective
 The objective of this proejct is to design a pipeline/tools to analyze single cell RNA expression data using R and packages such as [Seurat](https://satijalab.org/seurat/) and [DeSeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) for especific diferential expression analysis and [Tidyverse](https://www.tidyverse.org/) as a general toolbox for different plots. (Note that ggplot2 is necesary for Seurat and its contained in Tidyverse).
